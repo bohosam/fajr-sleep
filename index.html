@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>وقت النوم للفجر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen px-4 py-10">
+
+<div class="stars-container" id="starsContainer"></div>
+<div class="shooting-star" style="--sd:3s;--sdel:0s;top:15%;right:20%"></div>
+<div class="shooting-star" style="--sd:4s;--sdel:1.5s;top:25%;right:50%"></div>
+<div class="shooting-star" style="--sd:3.5s;--sdel:3s;top:10%;right:70%"></div>
+
+<div class="moon">
+  <div class="moon-circle">
+    <div class="moon-crater" style="width:16px;height:16px;top:20%;left:55%"></div>
+    <div class="moon-crater" style="width:9px;height:9px;top:55%;left:25%"></div>
+    <div class="moon-crater" style="width:7px;height:7px;top:35%;left:35%"></div>
+  </div>
+</div>
+
+<div class="relative z-10 w-full max-w-sm mx-auto">
+
+  <div class="text-center mb-7">
+    <div class="text-5xl mb-3">🕌</div>
+    <h1 class="text-3xl font-black text-white">وقت النوم</h1>
+    <p class="text-amber-400/70 text-sm mt-1 font-light">لصلاة الفجر</p>
+  </div>
+
+  <div class="glass-card p-6 mb-4">
+
+    <!-- SCREEN 1: Choose Method -->
+    <div id="chooseScreen">
+      <p class="text-white/50 text-sm text-center mb-5">كيف تحب تحدد موقعك؟</p>
+      <div class="space-y-3">
+        <button class="choice-btn" onclick="useGPS()">
+          <div class="text-2xl mb-1">📍</div>
+          <p class="text-white font-bold text-sm">تحديد الموقع تلقائياً</p>
+          <p class="text-white/40 text-xs mt-0.5">هيطلب إذن الموقع من المتصفح</p>
+        </button>
+        <button class="choice-btn" onclick="showManualSearch()">
+          <div class="text-2xl mb-1">🔍</div>
+          <p class="text-white font-bold text-sm">اختر مدينتك يدوياً</p>
+          <p class="text-white/40 text-xs mt-0.5">ابحث باسم المدينة</p>
+        </button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: Manual Search -->
+    <div id="manualScreen" class="hidden">
+      <div class="flex items-center gap-3 mb-5">
+        <button onclick="backToChoose()" class="text-white/40 text-xl px-1">←</button>
+        <p class="text-white/70 text-sm">ابحث عن مدينتك</p>
+      </div>
+      <input type="text" id="citySearch" class="search-input"
+        placeholder="مثلاً: القاهرة، الرياض، دبي..."
+        oninput="filterCities(this.value)"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="city-list" id="cityList"></div>
+    </div>
+
+    <!-- SCREEN 3: Loading -->
+    <div id="loadingScreen" class="hidden text-center py-4">
+      <p class="text-white/50 text-sm mb-4">بيجيب وقت الفجر...</p>
+      <div class="flex justify-center gap-2">
+        <div class="loading-dot w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+        <div class="loading-dot w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+        <div class="loading-dot w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: Results -->
+    <div id="resultsScreen" class="hidden fade-up">
+      <div class="saved-badge mb-4 justify-between">
+        <div class="flex items-center gap-2">
+          <span>💾</span>
+          <span id="savedLocationLabel">—</span>
+        </div>
+        <button onclick="changeLocation()" class="text-amber-400/60 text-xs underline">تغيير</button>
+      </div>
+
+      <div class="time-display p-5 mb-5 text-center">
+        <p class="text-white/50 text-xs mb-1 font-light">صلاة الفجر</p>
+        <div class="relative inline-block">
+          <div class="pulse-ring absolute inset-0 rounded-full border border-amber-400/30"></div>
+          <p class="text-5xl font-black text-amber-400 glow-amber tracking-wider" id="fajrTime">--:--</p>
+        </div>
+        <p class="text-white/40 text-xs mt-2" id="fajrDay"></p>
+      </div>
+
+      <div class="mb-5">
+        <p class="text-white/40 text-xs text-center mb-3">ساعات النوم الموصى بها</p>
+        <div class="flex justify-center gap-2">
+          <div class="flex-1 text-center p-2.5 rounded-xl" style="background:rgba(99,179,237,.07);border:1px solid rgba(99,179,237,.15)">
+            <p class="text-2xl font-black text-blue-300">7</p>
+            <p class="text-white/40 text-xs">ساعات</p>
+            <p class="text-white/30 text-xs">أدنى</p>
+          </div>
+          <div class="flex-1 text-center p-2.5 rounded-xl" style="background:rgba(167,243,208,.07);border:1px solid rgba(167,243,208,.15)">
+            <p class="text-2xl font-black text-emerald-300">8</p>
+            <p class="text-white/40 text-xs">ساعات</p>
+            <p class="text-white/30 text-xs">مثالي</p>
+          </div>
+          <div class="flex-1 text-center p-2.5 rounded-xl" style="background:rgba(252,211,77,.07);border:1px solid rgba(252,211,77,.15)">
+            <p class="text-2xl font-black text-yellow-300">9</p>
+            <p class="text-white/40 text-xs">ساعات</p>
+            <p class="text-white/30 text-xs">ممتاز</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider mb-5"></div>
+
+      <p class="text-white/50 text-xs text-center mb-3">أنام الساعة...</p>
+      <div class="space-y-2.5 mb-5">
+        <div class="flex items-center justify-between p-3.5 rounded-2xl" style="background:rgba(99,179,237,.08);border:1px solid rgba(99,179,237,.15)">
+          <div>
+            <p class="text-white/70 text-xs">7 ساعات — حد أدنى</p>
+            <p class="text-white/40 text-xs">تصحى بتعب شوية</p>
+          </div>
+          <p class="text-xl font-black text-blue-300 glow-blue" id="sleep7">--:--</p>
+        </div>
+        <div class="flex items-center justify-between p-3.5 rounded-2xl" style="background:rgba(167,243,208,.08);border:1px solid rgba(167,243,208,.2)">
+          <div>
+            <p class="text-emerald-300 text-xs font-semibold">8 ساعات — مثالي ✨</p>
+            <p class="text-white/40 text-xs">هتصحى نشيط</p>
+          </div>
+          <p class="text-xl font-black text-emerald-300" id="sleep8">--:--</p>
+        </div>
+        <div class="flex items-center justify-between p-3.5 rounded-2xl" style="background:rgba(252,211,77,.08);border:1px solid rgba(252,211,77,.15)">
+          <div>
+            <p class="text-white/70 text-xs">9 ساعات — ممتاز</p>
+            <p class="text-white/40 text-xs">أفضل راحة ممكنة</p>
+          </div>
+          <p class="text-xl font-black text-yellow-300" id="sleep9">--:--</p>
+        </div>
+      </div>
+
+      <div class="countdown-badge p-3 text-center">
+        <p class="text-white/40 text-xs mb-1">الوقت المتبقي للفجر</p>
+        <p class="text-blue-300 font-bold text-lg" id="countdown">--:--:--</p>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div id="errorScreen" class="hidden text-center py-2">
+      <p class="text-red-400/80 text-sm mb-4" id="errorMsg">حصل مشكلة 😕</p>
+      <button onclick="backToChoose()" class="loc-btn mx-auto">
+        <span>🔄</span><span>حاول تاني</span>
+      </button>
+    </div>
+
+  </div>
+
+  <p class="text-center text-white/20 text-xs">بيانات الصلاة من <span class="text-amber-400/40">Aladhan API</span></p>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
