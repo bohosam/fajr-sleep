@@ -202,7 +202,7 @@ async function fetchPrayerTimes(lat, lng, cityName) {
 function displayResults(fH, fM, city, dayName) {
   document.getElementById('fajrTime').textContent = formatTime12(fH, fM);
   document.getElementById('fajrDay').textContent = dayName;
-  document.getElementById('savedLocationLabel').textContent = `محافظة: ${city}`;
+  document.getElementById('savedLocationLabel').textContent = `مدينة : ${city}`;
   const s7 = subtractHours(fH,fM,7), s8 = subtractHours(fH,fM,8), s9 = subtractHours(fH,fM,9);
   document.getElementById('sleep7').textContent = formatTime12(s7.h,s7.m);
   document.getElementById('sleep8').textContent = formatTime12(s8.h,s8.m);
